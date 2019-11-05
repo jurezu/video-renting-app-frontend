@@ -9,13 +9,15 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import MoviesTable from "./moviesTable";
+import _ from "lodash";
 
 class Movie extends Component {
   state = {
     movies: [],
     pageSize: 4,
     currentPage: 1,
-    genres: []
+    genres: [],
+    sortColumn: { path: "title", order: "asc" }
   };
   componentDidMount() {
     const genres = [{ name: "All Genres", _id: "" }, ...getGenres()];
@@ -40,8 +42,8 @@ class Movie extends Component {
     this.setState({ movies });
   };
 
-  handleSort = path => {
-    console.log(path);
+  handleSort = sortColumn => {
+    this.setState({ sortColumn });
   };
   render() {
     const { length: count } = this.state.movies;
@@ -50,13 +52,16 @@ class Movie extends Component {
       pageSize,
       movies: allMovies,
       genres,
-      selectedGenre
+      selectedGenre,
+      sortColumn
     } = this.state;
     const filtered =
       selectedGenre && selectedGenre._id
         ? allMovies.filter(m => m.genre._id === selectedGenre._id)
         : allMovies;
-    let movies = paginate(filtered, currentPage, pageSize);
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+    let movies = paginate(sorted, currentPage, pageSize);
+
     return count ? (
       <Container>
         <Row>
@@ -74,6 +79,7 @@ class Movie extends Component {
               onDelete={this.handleDelete}
               onLike={this.handleLike}
               onSort={this.handleSort}
+              sortColumn={sortColumn}
             />
             <Pagination
               itemsCount={filtered.length}
