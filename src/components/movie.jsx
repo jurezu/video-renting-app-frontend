@@ -1,12 +1,29 @@
 import React, { Component } from "react";
 
 import { getMovies } from "../services/fakeMovieService";
-import Like from "./common/like";
+import { getGenres } from "../services/fakeGenreService";
 import Pagination from "./common/pagination";
 import { paginate } from "./utils/paginate";
-class Movie extends Component {
-  state = { movies: getMovies(), pageSize: 3, currentPage: 1 };
+import ListGroupSelect from "./common/listGroupSelect";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import MoviesTable from "./moviesTable";
 
+class Movie extends Component {
+  state = {
+    movies: [],
+    pageSize: 4,
+    currentPage: 1,
+    genres: []
+  };
+  componentDidMount() {
+    const genres = [{ name: "All Genres" }, ...getGenres()];
+    this.setState({ movies: getMovies(), genres });
+  }
+  handleItemSelect = genre => {
+    this.setState({ selectedGenre: genre, currentPage: 1 });
+  };
   handlePageChange = pageNumber => {
     this.setState({ currentPage: pageNumber });
   };
@@ -17,7 +34,6 @@ class Movie extends Component {
   };
 
   handleLike = m => {
-    console.log(m.title);
     const movies = [...this.state.movies];
     const index = movies.indexOf(m);
     movies[index].liked = !movies[index].liked;
@@ -26,54 +42,44 @@ class Movie extends Component {
 
   render() {
     const { length: count } = this.state.movies;
-    const { currentPage, pageSize, movies: allMovies } = this.state;
-    const movies = paginate(allMovies, currentPage, pageSize);
+    const {
+      currentPage,
+      pageSize,
+      movies: allMovies,
+      genres,
+      selectedGenre
+    } = this.state;
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? allMovies.filter(m => m.genre._id === selectedGenre._id)
+        : allMovies;
+    let movies = paginate(filtered, currentPage, pageSize);
     return count ? (
-      <React.Fragment>
-        <p>There are {count} of movies in db.</p>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Genre</th>
-              <th scope="col">Stock</th>
-              <th scope="col">Rental Rate</th>
-              <th scope="col">Like</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {movies.map(m => (
-              <tr key={m._id}>
-                <td>{m.title}</td>
-                <td>{m.genre.name}</td>
-                <td>{m.numberInStock}</td>
-                <td>{m.dailyRentalRate}</td>
-                <td>
-                  <Like
-                    liked={m.liked}
-                    onLike={() => this.handleLike(m)}
-                  ></Like>
-                </td>
-                <td>
-                  <button
-                    onClick={() => this.handleDelete(m)}
-                    className="btn btn-danger btn-sm"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          itemsCount={count}
-          pageSize={pageSize}
-          onPageChange={this.handlePageChange}
-          currentPage={currentPage}
-        />
-      </React.Fragment>
+      <Container>
+        <Row>
+          <Col xs={2}>
+            <ListGroupSelect
+              items={genres}
+              onItemSelect={this.handleItemSelect}
+              selectedItem={selectedGenre}
+            />
+          </Col>
+          <Col>
+            <p>There are {filtered.length} of movies in db.</p>
+            <MoviesTable
+              movies={movies}
+              onDelete={this.handleDelete}
+              onLike={this.handleLike}
+            />
+            <Pagination
+              itemsCount={filtered.length}
+              pageSize={pageSize}
+              onPageChange={this.handlePageChange}
+              currentPage={currentPage}
+            />
+          </Col>
+        </Row>
+      </Container>
     ) : (
       <h1>No Movies in table.</h1>
     );

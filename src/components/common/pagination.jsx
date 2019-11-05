@@ -7,7 +7,6 @@ const Pagination = props => {
 
   const pagesCount = Math.ceil(itemsCount / pageSize);
   const pages = _.range(1, pagesCount + 1);
-  console.log(currentPage);
 
   if (pagesCount === 1) return null;
   //TODO REIMPLEMENT IN REACT BOOTSTRAP
