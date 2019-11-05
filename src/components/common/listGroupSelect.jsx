@@ -16,7 +16,7 @@ class ListGroupSelect extends Component {
         {items.map(g => (
           <ListGroup.Item
             active={selectedItem === g ? true : false}
-            key={g[textProperty]}
+            key={g[valuePropery]}
             action
             onClick={() => onItemSelect(g)}
           >
