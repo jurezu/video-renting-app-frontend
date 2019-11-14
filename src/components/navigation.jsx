@@ -7,7 +7,7 @@ class Navigation extends Component {
   render() {
     return (
       <div>
-        <Navbar variant="light">
+        <Navbar bg="light" variant="light">
           <Navbar.Brand>Video Renting</Navbar.Brand>
           <Nav>
             <Nav.Link as={Link} to="/movies">
