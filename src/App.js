@@ -11,18 +11,20 @@ import NotFound from "./components/notFound";
 
 function App() {
   return (
-    <main role="main" className="container">
+    <React.Fragment>
       <Navigation />
-      <Switch>
-        <Route path="/movies/:id" component={MovieDetails}></Route>
-        <Route path="/movies" component={Movie}></Route>
-        <Route path="/customers" component={Customers}></Route>
-        <Route path="/rentals" component={Rentals}></Route>
-        <Route path="/not-found" component={NotFound}></Route>
-        <Redirect from="/" exact to="/movies"></Redirect>
-        <Redirect from="/" to="/not-found"></Redirect>
-      </Switch>
-    </main>
+      <main role="main" className="container">
+        <Switch>
+          <Route path="/movies/:id" component={MovieDetails}></Route>
+          <Route path="/movies" component={Movie}></Route>
+          <Route path="/customers" component={Customers}></Route>
+          <Route path="/rentals" component={Rentals}></Route>
+          <Route path="/not-found" component={NotFound}></Route>
+          <Redirect from="/" exact to="/movies"></Redirect>
+          <Redirect from="/" to="/not-found"></Redirect>
+        </Switch>
+      </main>
+    </React.Fragment>
   );
 }
 
