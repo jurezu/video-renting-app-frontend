@@ -2,26 +2,18 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 
-const Input = ({
-  name,
-  label,
-  value,
-  onChange,
-  type,
-  placeholder,
-  autoFocus,
-  error
-}) => {
+const Input = ({ name, label, error, ...rest }) => {
   return (
     <Form.Group controlId={name}>
       <Form.Label>{label}</Form.Label>
       <Form.Control
-        value={value}
-        onChange={onChange}
-        autoFocus={autoFocus}
+        //value={value}
+        //onChange={onChange}
+        //autoFocus={autoFocus}
+        //type={type}
+        //placeholder={placeholder}
+        {...rest} // added via rest operator
         name={name}
-        type={type}
-        placeholder={placeholder}
       />
       {error && <Alert variant="danger">{error}</Alert>}
     </Form.Group>
