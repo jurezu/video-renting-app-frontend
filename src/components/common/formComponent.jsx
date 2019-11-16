@@ -32,7 +32,6 @@ class FormComponent extends Component {
     event.preventDefault();
     const errors = this.validate();
     this.setState({ errors: errors || {} });
-
     if (errors) return;
     this.doSubmit();
   };
@@ -50,7 +49,11 @@ class FormComponent extends Component {
 
   renderButton = label => {
     return (
-      <Button variant="primary" disabled={this.validate()}>
+      <Button
+        variant="primary"
+        disabled={this.validate()}
+        onClick={this.handleSubmit}
+      >
         {label}
       </Button>
     );
