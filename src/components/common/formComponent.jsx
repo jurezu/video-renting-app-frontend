@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import Input from "../common/input";
+import Alert from "react-bootstrap/Alert";
+import Select from "./select";
 
 class FormComponent extends Component {
   state = {
@@ -41,7 +44,6 @@ class FormComponent extends Component {
     const errorMessage = this.validateProperty(input);
     if (errorMessage) errors[input.name] = errorMessage;
     else delete errors[input.name];
-
     const data = { ...this.state.data };
     data[input.name] = input.value;
     this.setState({ data, errors });
@@ -71,6 +73,20 @@ class FormComponent extends Component {
         autoFocus={autoFocus}
         error={errors[name]}
       ></Input>
+    );
+  };
+  renderSelect = (name, label, options, autoFocus = false) => {
+    const { data, errors } = this.state;
+    return (
+      <Select
+        onChange={this.handleChange}
+        name={name}
+        value={data[name]}
+        label={label}
+        autoFocus={autoFocus}
+        error={errors[name]}
+        options={options}
+      />
     );
   };
 }
