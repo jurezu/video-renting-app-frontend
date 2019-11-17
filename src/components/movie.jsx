@@ -12,6 +12,7 @@ import MoviesTable from "./moviesTable";
 import _ from "lodash";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
+import Search from "./forms/search";
 
 class Movie extends Component {
   state = {
@@ -19,14 +20,15 @@ class Movie extends Component {
     pageSize: 4,
     currentPage: 1,
     genres: [],
-    sortColumn: { path: "title", order: "asc" }
+    sortColumn: { path: "title", order: "asc" },
+    searchTerm: ""
   };
   componentDidMount() {
     const genres = [{ name: "All Genres", _id: "" }, ...getGenres()];
     this.setState({ movies: getMovies(), genres });
   }
   handleItemSelect = genre => {
-    this.setState({ selectedGenre: genre, currentPage: 1 });
+    this.setState({ selectedGenre: genre, currentPage: 1, searchTerm: "" });
   };
   handlePageChange = pageNumber => {
     this.setState({ currentPage: pageNumber });
@@ -54,15 +56,29 @@ class Movie extends Component {
       selectedGenre,
       sortColumn,
       currentPage,
-      pageSize
+      pageSize,
+      searchTerm
     } = this.state;
-    const filtered =
-      selectedGenre && selectedGenre._id
-        ? allMovies.filter(m => m.genre._id === selectedGenre._id)
-        : allMovies;
+
+    let filtered = allMovies;
+    if (selectedGenre) {
+      filtered =
+        selectedGenre && selectedGenre._id
+          ? allMovies.filter(m => m.genre._id === selectedGenre._id)
+          : allMovies;
+    }
+    if (searchTerm) {
+      filtered = allMovies.filter(m =>
+        m.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
     let movies = paginate(sorted, currentPage, pageSize);
     return { totalCount: filtered.length, data: movies };
+  };
+  handleSearch = query => {
+    this.setState({ searchTerm: query, selectedGenre: "", currentPage: 1 });
   };
 
   render() {
@@ -91,6 +107,11 @@ class Movie extends Component {
               New Movie
             </Button>
             <p>There are {totalCount} of movies in db.</p>
+            <Search
+              onChange={this.handleSearch}
+              placeholder="Search..."
+              value={this.state.searchTerm}
+            />
             <MoviesTable
               movies={data}
               onDelete={this.handleDelete}

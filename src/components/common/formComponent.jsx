@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import Input from "../common/input";
-import Alert from "react-bootstrap/Alert";
 import Select from "./select";
 
 class FormComponent extends Component {
