@@ -2,8 +2,8 @@ import React from "react";
 import FormComponent from "../common/formComponent";
 import Joi from "joi-browser";
 import Form from "react-bootstrap/Form";
-import { getGenres } from "../../services/fakeGenreService";
-import { saveMovie, getMovie } from "../../services/fakeMovieService";
+import { getGenres } from "../../services/genreService";
+import { saveMovie, getMovie } from "../../services/movieService";
 
 class MovieForm extends FormComponent {
   state = {
@@ -17,18 +17,28 @@ class MovieForm extends FormComponent {
     genres: []
   };
 
-  componentDidMount = () => {
-    const genres = getGenres();
+  async populateGenres() {
+    const { data: genres } = await getGenres();
     this.setState({ genres });
+  }
 
-    const movieId = this.props.match.params.id;
-    if (movieId === "new") return;
+  async populateMovies() {
+    try {
+      const movieId = this.props.match.params.id;
+      if (movieId === "new") return;
 
-    const movie = getMovie(movieId);
-    if (!movie) return this.props.history.replace("/not-found");
-    const data = this.mapMovieToDataView(movie);
-    this.setState({ data });
-  };
+      const { data: movie } = await getMovie(movieId);
+      const data = this.mapMovieToDataView(movie);
+      this.setState({ data });
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        return this.props.history.replace("/not-found");
+    }
+  }
+  async componentDidMount() {
+    await this.populateGenres();
+    await this.populateMovies();
+  }
 
   mapMovieToDataView = movie => {
     return {
@@ -39,10 +49,12 @@ class MovieForm extends FormComponent {
       _id: movie._id
     };
   };
+
   schema = {
     _id: Joi.string(),
     title: Joi.string()
       .required()
+      .min(5)
       .label("Title"),
     genreId: Joi.string()
       .required()
@@ -60,8 +72,8 @@ class MovieForm extends FormComponent {
       .label("Rate")
   };
 
-  doSubmit = () => {
-    saveMovie(this.state.data);
+  doSubmit = async () => {
+    await saveMovie(this.state.data);
     this.props.history.push("/movies");
   };
 
