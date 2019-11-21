@@ -1,6 +1,4 @@
-import React from "react";
-import "./App.css";
-
+import React, { Component } from "react";
 import Navigation from "./components/navigation";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Customers from "./components/customers";
@@ -10,26 +8,45 @@ import NotFound from "./components/notFound";
 import LoginForm from "./components/forms/loginForm";
 import RegisterForm from "./components/forms/registerForm";
 import MovieForm from "./components/forms/movieForm";
+import "./App.css";
 
-function App() {
-  return (
-    <React.Fragment>
-      <Navigation />
-      <main role="main" className="container">
-        <Switch>
-          <Route path="/register" component={RegisterForm} />
-          <Route path="/login" component={LoginForm} />
-          <Route path="/movies/:id" component={MovieForm} />
-          <Route path="/movies" component={Movie} />
-          <Route path="/customers" component={Customers} />
-          <Route path="/rentals" component={Rentals} />
-          <Route path="/not-found" component={NotFound} />
-          <Redirect from="/" exact to="/movies" />
-          <Redirect from="/" to="/not-found" />
-        </Switch>
-      </main>
-    </React.Fragment>
-  );
+//todo toastify
+
+import jwtDecode from "jwt-decode";
+import Logout from "./components/logOut";
+
+class App extends Component {
+  state = {};
+
+  componentDidMount() {
+    try {
+      const jwt = localStorage.getItem("token");
+      const user = jwtDecode(jwt);
+      this.setState({ user });
+      console.log(user);
+    } catch (ex) {} //no action needed, no token
+  }
+  render() {
+    return (
+      <React.Fragment>
+        <Navigation user={this.state.user} />
+        <main role="main" className="container">
+          <Switch>
+            <Route path="/register" component={RegisterForm} />
+            <Route path="/login" component={LoginForm} />
+            <Route path="/logout" component={Logout} />
+            <Route path="/movies/:id" component={MovieForm} />
+            <Route path="/movies" component={Movie} />
+            <Route path="/customers" component={Customers} />
+            <Route path="/rentals" component={Rentals} />
+            <Route path="/not-found" component={NotFound} />
+            <Redirect from="/" exact to="/movies" />
+            <Redirect from="/" to="/not-found" />
+          </Switch>
+        </main>
+      </React.Fragment>
+    );
+  }
 }
 
 export default App;

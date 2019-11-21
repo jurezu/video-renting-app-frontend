@@ -5,6 +5,7 @@ import { Navbar, Nav } from "react-bootstrap";
 class Navigation extends Component {
   state = {};
   render() {
+    const { user } = this.props;
     return (
       <div>
         <Navbar bg="light" variant="light">
@@ -19,12 +20,25 @@ class Navigation extends Component {
             <Nav.Link as={Link} to="/rentals">
               Rentals
             </Nav.Link>
-            <Nav.Link as={Link} to="/login">
-              Login
-            </Nav.Link>
-            <Nav.Link as={Link} to="/register">
-              Register
-            </Nav.Link>
+            {!user ? (
+              <React.Fragment>
+                <Nav.Link as={Link} to="/login">
+                  Login
+                </Nav.Link>
+                <Nav.Link as={Link} to="/register">
+                  Register
+                </Nav.Link>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Nav.Link as={Link} to="/profile">
+                  Profile
+                </Nav.Link>
+                <Nav.Link as={Link} to="/logout">
+                  Logout
+                </Nav.Link>
+              </React.Fragment>
+            )}
           </Nav>
         </Navbar>
       </div>

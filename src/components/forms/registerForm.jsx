@@ -2,11 +2,12 @@ import React from "react";
 import FormComponent from "../common/formComponent";
 import Joi from "joi-browser";
 import Form from "react-bootstrap/Form";
+import { registerUser } from "../../services/userService";
 
 class RegisterForm extends FormComponent {
   state = {
     data: {
-      username: "",
+      email: "",
       password: "",
       name: ""
     },
@@ -14,26 +15,39 @@ class RegisterForm extends FormComponent {
   };
 
   schema = {
-    username: Joi.string()
+    email: Joi.string()
       .required()
       .email()
-      .label("Username"),
+      .label("Email"),
     password: Joi.string()
       .required()
       .min(5)
       .label("Password"),
     name: Joi.string()
+      .min(5)
       .required()
       .label("Name")
   };
 
-  doSubmit = () => {
-    console.log("Registered");
+  doSubmit = async () => {
+    try {
+      const { headers } = await registerUser(this.state.data);
+      localStorage.setItem("token", headers["x-auth-token"]);
+      console.log("Registered");
+      window.location = "/"; //to get full reload, so user is rendered
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        const errors = { ...this.state.errors };
+        errors.email = ex.response.data;
+        this.setState({ errors });
+        console.log("Already registered");
+      }
+    }
   };
   render() {
     return (
       <Form onSubmit={this.handleSubmit}>
-        {this.renderInput("username", "Username", true)}
+        {this.renderInput("email", "Email", true)}
         {this.renderInput("password", "Password", false, "password")}
         {this.renderInput("name", "Name", false)}
         {this.renderButton("Register")}
