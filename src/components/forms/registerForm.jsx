@@ -3,6 +3,7 @@ import FormComponent from "../common/formComponent";
 import Joi from "joi-browser";
 import Form from "react-bootstrap/Form";
 import { registerUser } from "../../services/userService";
+import auth from "../../services/authService";
 
 class RegisterForm extends FormComponent {
   state = {
@@ -32,7 +33,7 @@ class RegisterForm extends FormComponent {
   doSubmit = async () => {
     try {
       const { headers } = await registerUser(this.state.data);
-      localStorage.setItem("token", headers["x-auth-token"]);
+      auth.loginWithJwt(headers["x-auth-token"]);
       console.log("Registered");
       window.location = "/"; //to get full reload, so user is rendered
     } catch (ex) {

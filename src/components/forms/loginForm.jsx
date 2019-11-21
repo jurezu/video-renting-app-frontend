@@ -3,7 +3,7 @@ import React from "react";
 import FormComponent from "../common/formComponent";
 import { Form } from "react-bootstrap";
 import Joi from "joi-browser";
-import { login } from "../../services/authService";
+import auth from "../../services/authService";
 
 class LoginForm extends FormComponent {
   state = {
@@ -25,9 +25,7 @@ class LoginForm extends FormComponent {
   doSubmit = async () => {
     const { email, password } = this.state.data;
     try {
-      const { data: jwt } = await login(email, password);
-      console.log(jwt);
-      localStorage.setItem("token", jwt);
+      await auth.login(email, password);
       console.log("Login successfull");
       window.location = "/"; //to get full reload, so user is rendered
     } catch (ex) {

@@ -12,19 +12,16 @@ import "./App.css";
 
 //todo toastify
 
-import jwtDecode from "jwt-decode";
 import Logout from "./components/logOut";
+import auth from "./services/authService";
 
 class App extends Component {
   state = {};
 
   componentDidMount() {
-    try {
-      const jwt = localStorage.getItem("token");
-      const user = jwtDecode(jwt);
-      this.setState({ user });
-      console.log(user);
-    } catch (ex) {} //no action needed, no token
+    const user = auth.getCurrentUser();
+    this.setState({ user });
+    console.log(user);
   }
   render() {
     return (
