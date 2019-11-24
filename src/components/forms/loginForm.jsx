@@ -41,7 +41,7 @@ class LoginForm extends FormComponent {
   };
 
   render() {
-    if (auth.getCurrentUser) return <Redirect to="/" />;
+    if (auth.getCurrentUser()) return <Redirect to="/" />;
     return (
       <Form onSubmit={this.handleSubmit}>
         {this.renderInput("email", "Email", true)}
