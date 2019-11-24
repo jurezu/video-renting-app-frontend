@@ -94,6 +94,7 @@ class Movie extends Component {
   };
 
   render() {
+    const { user } = this.props;
     const { length: count } = this.state.movies;
     const {
       currentPage,
@@ -116,9 +117,11 @@ class Movie extends Component {
             />
           </Col>
           <Col>
-            <Button variant="primary" to="movies/new" as={Link}>
-              New Movie
-            </Button>
+            {user && (
+              <Button variant="primary" to="movies/new" as={Link}>
+                New Movie
+              </Button>
+            )}
             <p>There are {totalCount} of movies in db.</p>
             <Search
               onChange={this.handleSearch}

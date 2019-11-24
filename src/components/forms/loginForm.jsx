@@ -4,6 +4,7 @@ import FormComponent from "../common/formComponent";
 import { Form } from "react-bootstrap";
 import Joi from "joi-browser";
 import auth from "../../services/authService";
+import { Redirect } from "react-router-dom";
 
 class LoginForm extends FormComponent {
   state = {
@@ -27,7 +28,8 @@ class LoginForm extends FormComponent {
     try {
       await auth.login(email, password);
       console.log("Login successfull");
-      window.location = "/"; //to get full reload, so user is rendered
+      const { state } = this.props.location;
+      window.location = state ? state.from.pathname : "/"; //to get full reload, so user is rendered
     } catch (ex) {
       if (ex.response && ex.response.status) {
         const errors = { ...this.state.errors };
@@ -39,6 +41,7 @@ class LoginForm extends FormComponent {
   };
 
   render() {
+    if (auth.getCurrentUser) return <Redirect to="/" />;
     return (
       <Form onSubmit={this.handleSubmit}>
         {this.renderInput("email", "Email", true)}

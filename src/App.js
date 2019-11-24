@@ -14,6 +14,7 @@ import "./App.css";
 
 import Logout from "./components/logOut";
 import auth from "./services/authService";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 class App extends Component {
   state = {};
@@ -21,19 +22,22 @@ class App extends Component {
   componentDidMount() {
     const user = auth.getCurrentUser();
     this.setState({ user });
-    console.log(user);
   }
   render() {
+    const { user } = this.state;
     return (
       <React.Fragment>
-        <Navigation user={this.state.user} />
+        <Navigation user={user} />
         <main role="main" className="container">
           <Switch>
             <Route path="/register" component={RegisterForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/logout" component={Logout} />
-            <Route path="/movies/:id" component={MovieForm} />
-            <Route path="/movies" component={Movie} />
+            <ProtectedRoute path="/movies/:id" component={MovieForm} />
+            <Route
+              path="/movies"
+              render={props => <Movie {...props} user={user} />}
+            />
             <Route path="/customers" component={Customers} />
             <Route path="/rentals" component={Rentals} />
             <Route path="/not-found" component={NotFound} />
