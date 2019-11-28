@@ -105,7 +105,7 @@ class Movie extends Component {
     } = this.state;
 
     const { totalCount, data } = this.getPageData();
-    return count ? (
+    return (
       <Container>
         <ToastContainer />
         <Row>
@@ -144,8 +144,6 @@ class Movie extends Component {
           </Col>
         </Row>
       </Container>
-    ) : (
-      <h1>No Movies in table.</h1>
     );
   }
 }
