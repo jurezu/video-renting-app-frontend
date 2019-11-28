@@ -1,4 +1,6 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## :white_check_mark: App is availabe on
+
+https://jz-video-renting.herokuapp.com
 
 ## Available Scripts
 
